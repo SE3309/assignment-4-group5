@@ -50,3 +50,39 @@ exports.updateFinance = (req, res) => {
     }
   );
 };
+
+// Get total expenses per truck for a specific month and year
+exports.getTotalExpensesPerTruck = (req, res) => {
+  const { month, year } = req.query;
+
+  const query = `
+    SELECT t.truckID, t.licencePlateNumber, SUM(f.totalAmount) AS totalExpenses
+    FROM Truck t
+    JOIN Finance f ON t.truckID = f.truckID
+    WHERE MONTH(f.paymentDate) = ? AND YEAR(f.paymentDate) = ?
+    GROUP BY t.truckID, t.licencePlateNumber;
+  `;
+
+  db.query(query, [month, year], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(200).json(results);
+  });
+};
+
+
+// Get breakdown of expenses by type for a specific month and year
+exports.getExpenseBreakdownByType = (req, res) => {
+  const { month, year } = req.query; // Read month and year from query parameters
+
+  const query = `
+    SELECT f.truckID, f.expense, SUM(f.totalAmount) AS expenseTotal
+    FROM Finance f
+    WHERE MONTH(f.paymentDate) = ? AND YEAR(f.paymentDate) = ?
+    GROUP BY f.truckID, f.expense;
+  `;
+
+  db.query(query, [month, year], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(200).json(results);
+  });
+};
