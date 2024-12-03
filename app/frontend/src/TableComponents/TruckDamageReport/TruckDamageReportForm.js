@@ -1,27 +1,61 @@
 import React, { useState, useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const TruckDamageReportForm = () => {
   const [formData, setFormData] = useState({
     truckID: "",
     damageData: "",
-    damageDescription: ""
+    damageDescription: "",
   });
 
-  
   const [truckIDs, setTruckIDs] = useState([]);
-  useEffect(() => {
-    fetch("http://localhost:5001/api/truckids")
-      .then((res) => res.json())
-      .then(setTruckIDs)
-      .catch(console.error);
-  }, []);
-  
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  // Fetch truck IDs
+  useEffect(() => {
+    const fetchTruckIDs = async () => {
+      try {
+        const response = await fetch("http://localhost:5001/api/truck");
+        const data = await response.json();
+        setTruckIDs(data);
+      } catch (error) {
+        console.error("Error fetching truck IDs:", error);
+      }
+    };
+    fetchTruckIDs();
+  }, []);
+
+  // Handle truck selection
+  const handleTruckSelect = async (e) => {
+    const truckID = e.target.value;
+    setFormData((prevFormData) => ({ ...prevFormData, truckID }));
+
+    if (truckID) {
+      try {
+        const response = await fetch(`http://localhost:5001/api/truck/${truckID}`);
+        if (response.ok) {
+          const truckData = await response.json();
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            truckID: truckData.truckID || "",
+            damageData: truckData.damageData || "",
+            damageDescription: truckData.damageDescription || "",
+          }));
+        } else {
+          console.error("Error fetching truck details.");
+        }
+      } catch (error) {
+        console.error("Error fetching truck details:", error);
+      }
+    }
   };
 
+  // Handle form field changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -31,50 +65,86 @@ const TruckDamageReportForm = () => {
         body: JSON.stringify(formData),
       });
       if (response.ok) {
-        alert("TruckDamageReport saved successfully!");
+        alert("Truck Damage Report saved successfully!");
+        setFormData({
+          truckID: "",
+          damageData: "",
+          damageDescription: "",
+        });
       } else {
-        console.error("Error saving TruckDamageReport");
+        alert("Error saving truck damage report. Check the console for details.");
+        console.error("Error Response:", await response.json());
       }
     } catch (error) {
-      console.error("Error saving TruckDamageReport", error);
+      console.error("Error saving truck damage report:", error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        name="truckID"
-        placeholder="truckID"
-        value={formData.truckID}
-        onChange={handleChange}
-      />
-<input
-        name="damageData"
-        placeholder="damageData"
-        value={formData.damageData}
-        onChange={handleChange}
-      />
-<input
-        name="damageDescription"
-        placeholder="damageDescription"
-        value={formData.damageDescription}
-        onChange={handleChange}
-      />
-      
-      <select
-        name="truckID"
-        value={formData.truckID}
-        onChange={handleChange}
-      >
-        <option value="">Select truckID</option>
-        {truckIDs.map((item) => (
-          <option key={item.truckID} value={item.truckID}>
-            {item.name || item.id}
-          </option>
-        ))}
-      </select>
-      <button type="submit">Save</button>
-    </form>
+    <div className="container mt-5">
+      <div className="card shadow border-0">
+        <div className="card-header bg-dark text-light text-center">
+          <h3 className="card-title">Truck Damage Report Form</h3>
+        </div>
+        <div className="card-body bg-light">
+          <form onSubmit={handleSubmit}>
+            {/* Truck Dropdown */}
+            <div className="mb-3">
+              <label htmlFor="truckSelect" className="form-label text-primary">
+                Select Truck
+              </label>
+              <select
+                id="truckSelect"
+                className="form-select border-primary"
+                name="truckID"
+                value={formData.truckID}
+                onChange={handleTruckSelect}
+              >
+                <option value="">-- Choose a Truck --</option>
+                {truckIDs.map((item) => (
+                  <option key={item.truckID} value={item.truckID}>
+                    {item.name || `Truck ${item.truckID}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Form Inputs */}
+            {[
+              { name: "damageData", label: "Damage Data", placeholder: "Enter Damage Data" },
+              {
+                name: "damageDescription",
+                label: "Damage Description",
+                placeholder: "Enter Damage Description",
+              },
+            ].map((field, index) => (
+              <div className="mb-3" key={index}>
+                <label htmlFor={field.name} className="form-label text-primary">
+                  {field.label}
+                </label>
+                <input
+                  id={field.name}
+                  name={field.name}
+                  type="text"
+                  className="form-control border-primary"
+                  placeholder={field.placeholder}
+                  value={formData[field.name] || ""}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            ))}
+
+            {/* Submit Button */}
+            <div className="text-center">
+              <button type="submit" className="btn btn-primary btn-lg">
+                Save Truck Damage Report
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   );
 };
 

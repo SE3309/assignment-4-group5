@@ -21,49 +21,57 @@ import Tax from "./Tax/TaxForm.js";
 import Truck from "./Truck/TruckForm.js";
 import Trips from "./Trips/TripsForm.js";
 import TruckDamageReport from "./TruckDamageReport/TruckDamageReportForm.js";
+import TrailerDamageReport from "./TrailerDamageReport/TrailerDamageReportForm.js";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 
 const MultiTabForm = () => {
   const tabs = [
     { title: "Driver", component: <Driver /> },
-    { title: "Bank Information", component: <BankInformation /> },
-    { title: "Supplier", component: <Supplier /> },
-    { title: "Customer", component: <Customer /> },
-    { title: "Shipment", component: <Shipment /> },
-    { title: "Route", component: <Route /> },
-    { title: "Trailer", component: <Trailer /> },
-    { title: "Customer Contact Info", component: <CustomerContact /> },
     { title: "Driver Phone", component: <DriverPhone /> },
     { title: "Emergency Information", component: <EmergencyInformation /> },
-    { title: "Finance", component: <Finance /> },
-    { title: "Invoice", component: <Invoice /> },
-    { title: "Invoice Tax", component: <InvoiceTax /> },
-    { title: "Proof of Delivery", component: <POD /> },
+    { title: "Bank Information", component: <BankInformation /> },
+    { title: "Supplier", component: <Supplier /> },
     { title: "Supplier Contact Info", component: <SupplierContactInfo /> },
     { title: "Supplier Contract", component: <SupplierContract /> },
-    { title: "Tax", component: <Tax /> },
+    { title: "Customer", component: <Customer /> },
+    { title: "Customer Contact Info", component: <CustomerContact /> },
     { title: "Truck", component: <Truck /> },
-    { title: "Trips", component: <Trips /> },
-    { title: "Truck Damage Report", component: <TruckDamageReport />  },
-  ];
+    { title: "Truck Damage Report", component: <TruckDamageReport /> },
+    { title: "Trailer", component: <Trailer /> },
+    { title: "Trailer Damage Report", component: <TrailerDamageReport /> },
+];
 
   const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <div>
-      {/* Tab Buttons */}
-      <div >
-        {tabs.map((tab, index) => (
-          <button
-            key={index}
-            onClick={() => setActiveTab(index)} >
-            {tab.title}
-          </button>
-        ))}
+    <div className="container mt-4">
+      {/* Application Title */}
+      <div className="text-center mb-4">
+        <h1 className="display-4">Truck Management Application</h1>
+        <p className="lead">Effortlessly manage your fleet data and reports</p>
       </div>
 
-      {/* Render the active tab's component */}
-      <div>{tabs[activeTab].component}</div>
+      {/* Tab Navigation */}
+      <ul className="nav nav-tabs justify-content-center">
+        {tabs.map((tab, index) => (
+          <li className="nav-item" key={index}>
+            <button
+              className={`nav-link ${activeTab === index ? "active" : ""}`}
+              onClick={() => setActiveTab(index)}
+            >
+              {tab.title}
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      {/* Tab Content */}
+      <div className="tab-content mt-4">
+        <div className="tab-pane fade show active">
+          {tabs[activeTab].component}
+        </div>
+      </div>
     </div>
   );
 };

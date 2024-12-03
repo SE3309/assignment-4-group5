@@ -1,87 +1,159 @@
 import React, { useState, useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const SupplierContractForm = () => {
   const [formData, setFormData] = useState({
     supplierID: "",
     contractStart: "",
     contractEnd: "",
-    productType: ""
+    productType: "",
   });
 
-  
   const [supplierIDs, setSupplierIDs] = useState([]);
-  useEffect(() => {
-    fetch("http://localhost:5001/api/supplierids")
-      .then((res) => res.json())
-      .then(setSupplierIDs)
-      .catch(console.error);
-  }, []);
-  
+  const [selectedContract, setSelectedContract] = useState("");
 
+  // Fetch all supplier IDs
+  useEffect(() => {
+    const fetchSupplierIDs = async () => {
+      try {
+        const response = await fetch("http://localhost:5001/api/suppliercontract");
+        const data = await response.json();
+        setSupplierIDs(data);
+      } catch (error) {
+        console.error("Error fetching supplier IDs:", error);
+      }
+    };
+    fetchSupplierIDs();
+  }, []);
+
+  // Handle form field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  // Handle supplier selection
+  const handleSupplierSelect = (e) => {
+    const supplierID = e.target.value;
+    setSelectedContract(supplierID);
+    if (supplierID) {
+      const selected = supplierIDs.find(
+        (supplier) => supplier.supplierID === parseInt(supplierID)
+      );
+      if (selected) {
+        setFormData({
+          supplierID: selected.supplierID || "",
+          contractStart: selected.contractStart || "",
+          contractEnd: selected.contractEnd || "",
+          productType: selected.productType || "",
+        });
+      } else {
+        console.error("Supplier contract info not found.");
+      }
+    } else {
+      setFormData({
+        supplierID: "",
+        contractStart: "",
+        contractEnd: "",
+        productType: "",
+      });
+    }
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const url = selectedContract
+      ? `http://localhost:5001/api/suppliercontract/${selectedContract}`
+      : "http://localhost:5001/api/suppliercontract";
+    const method = selectedContract ? "PUT" : "POST";
+
     try {
-      const response = await fetch("http://localhost:5001/api/suppliercontract", {
-        method: "POST",
+      const response = await fetch(url, {
+        method: method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
       if (response.ok) {
-        alert("SupplierContract saved successfully!");
+        alert("Supplier contract saved successfully!");
+        setFormData({
+          supplierID: "",
+          contractStart: "",
+          contractEnd: "",
+          productType: "",
+        });
+        setSelectedContract("");
       } else {
-        console.error("Error saving SupplierContract");
+        alert("Error saving supplier contract. Check the console for details.");
+        console.error("Error Response:", await response.json());
       }
     } catch (error) {
-      console.error("Error saving SupplierContract", error);
+      console.error("Error saving supplier contract:", error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        name="supplierID"
-        placeholder="supplierID"
-        value={formData.supplierID}
-        onChange={handleChange}
-      />
-<input
-        name="contractStart"
-        placeholder="contractStart"
-        value={formData.contractStart}
-        onChange={handleChange}
-      />
-<input
-        name="contractEnd"
-        placeholder="contractEnd"
-        value={formData.contractEnd}
-        onChange={handleChange}
-      />
-<input
-        name="productType"
-        placeholder="productType"
-        value={formData.productType}
-        onChange={handleChange}
-      />
-      
-      <select
-        name="supplierID"
-        value={formData.supplierID}
-        onChange={handleChange}
-      >
-        <option value="">Select supplierID</option>
-        {supplierIDs.map((item) => (
-          <option key={item.supplierID} value={item.supplierID}>
-            {item.name || item.id}
-          </option>
-        ))}
-      </select>
-      <button type="submit">Save</button>
-    </form>
+    <div className="container mt-5">
+      <div className="card shadow border-0">
+        <div className="card-header bg-dark text-light text-center">
+          <h3 className="card-title">Supplier Contract Form</h3>
+        </div>
+        <div className="card-body bg-light">
+          <form onSubmit={handleSubmit}>
+            {/* Supplier Dropdown */}
+            <div className="mb-3">
+              <label htmlFor="supplierSelect" className="form-label text-primary">
+                Select Supplier
+              </label>
+              <select
+                id="supplierSelect"
+                className="form-select border-primary"
+                name="supplierID"
+                value={formData.supplierID}
+                onChange={handleSupplierSelect}
+              >
+                <option value="">-- Choose a Supplier --</option>
+                {supplierIDs.map((item) => (
+                  <option key={item.supplierID} value={item.supplierID}>
+                    {item.name || `Supplier ${item.supplierID}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Form Inputs */}
+            {[
+              { name: "contractStart", label: "Contract Start Date", placeholder: "", type: "date" },
+              { name: "contractEnd", label: "Contract End Date", placeholder: "", type: "date" },
+              { name: "productType", label: "Product Type", placeholder: "Enter Product Type" },
+            ].map((field, index) => (
+              <div className="mb-3" key={index}>
+                <label htmlFor={field.name} className="form-label text-primary">
+                  {field.label}
+                </label>
+                <input
+                  id={field.name}
+                  name={field.name}
+                  type={field.type || "text"}
+                  className="form-control border-primary"
+                  placeholder={field.placeholder}
+                  value={formData[field.name] || ""}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            ))}
+
+            {/* Submit Button */}
+            <div className="text-center">
+              <button type="submit" className="btn btn-primary btn-lg">
+                {selectedContract ? "Update Supplier Contract" : "Save Supplier Contract"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 
 const BankInformationForm = () => {
   const [formData, setFormData] = useState({
@@ -87,66 +88,103 @@ const BankInformationForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      {/* Driver Dropdown */}
-      <label htmlFor="driverID">Driver</label>
-      <select
-        name="driverID"
-        id="driverID"
-        value={formData.driverID}
-        onChange={handleChange}
-        required
-      >
-        <option value="">Select a Driver</option>
-        {drivers.map((driver) => (
-          <option key={driver.driverID} value={driver.driverID}>
-            {driver.driverName} (ID: {driver.driverID})
-          </option>
-        ))}
-      </select>
+    <div className="container mt-5">
+      <div className="card shadow border-0">
+        <div className="card-header bg-dark text-light text-center">
+          <h3 className="card-title">Bank Information Form</h3>
+        </div>
+        <div className="card-body bg-light">
+          <form onSubmit={handleSubmit}>
+            {/* Driver Dropdown */}
+            <div className="mb-3">
+              <label htmlFor="driverID" className="form-label text-primary">
+                Select Driver
+              </label>
+              <select
+                name="driverID"
+                id="driverID"
+                className="form-select border-primary"
+                value={formData.driverID}
+                onChange={handleChange}
+                required
+              >
+                <option value="">-- Choose a Driver --</option>
+                {drivers.map((driver) => (
+                  <option key={driver.driverID} value={driver.driverID}>
+                    {driver.driverName} (ID: {driver.driverID})
+                  </option>
+                ))}
+              </select>
+            </div>
 
-      {/* Transit Number */}
-      <label htmlFor="transitNo">Transit Number</label>
-      <input
-        type="text"
-        name="transitNo"
-        id="transitNo"
-        placeholder="Transit Number"
-        value={formData.transitNo}
-        onChange={handleChange}
-        required
-      />
+            {/* Transit Number */}
+            <div className="mb-3">
+              <label htmlFor="transitNo" className="form-label text-secondary">
+                Transit Number
+              </label>
+              <input
+                type="text"
+                name="transitNo"
+                id="transitNo"
+                className="form-control border-secondary"
+                placeholder="Enter Transit Number"
+                value={formData.transitNo}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-      {/* Branch Number */}
-      <label htmlFor="branchNo">Branch Number</label>
-      <input
-        type="text"
-        name="branchNo"
-        id="branchNo"
-        placeholder="Branch Number"
-        value={formData.branchNo}
-        onChange={handleChange}
-        required
-      />
+            {/* Branch Number */}
+            <div className="mb-3">
+              <label htmlFor="branchNo" className="form-label text-success">
+                Branch Number
+              </label>
+              <input
+                type="text"
+                name="branchNo"
+                id="branchNo"
+                className="form-control border-success"
+                placeholder="Enter Branch Number"
+                value={formData.branchNo}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-      {/* Account Number */}
-      <label htmlFor="accountNo">Account Number</label>
-      <input
-        type="text"
-        name="accountNo"
-        id="accountNo"
-        placeholder="Account Number"
-        value={formData.accountNo}
-        onChange={handleChange}
-        required
-      />
+            {/* Account Number */}
+            <div className="mb-3">
+              <label htmlFor="accountNo" className="form-label text-danger">
+                Account Number
+              </label>
+              <input
+                type="text"
+                name="accountNo"
+                id="accountNo"
+                className="form-control border-danger"
+                placeholder="Enter Account Number"
+                value={formData.accountNo}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-      {/* Error Message */}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+            {/* Error Message */}
+            {error && (
+              <div className="alert alert-danger text-center" role="alert">
+                {error}
+              </div>
+            )}
 
-      {/* Submit Button */}
-      <button type="submit">Save</button>
-    </form>
+            {/* Submit Button */}
+            <div className="text-center">
+              <button type="submit" className="btn btn-dark btn-lg">
+                Save Information
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   );
 };
 

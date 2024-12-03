@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 
 const DriverForm = () => {
   const [formData, setFormData] = useState({
@@ -44,7 +45,6 @@ const DriverForm = () => {
     if (driverID) {
       const selected = drivers.find((driver) => driver.driverID === parseInt(driverID));
       if (selected) {
-        // Populate form fields with selected driver's data
         setFormData({
           licenseNumber: selected.licenseNumber || "",
           driverName: selected.driverName || "",
@@ -62,7 +62,6 @@ const DriverForm = () => {
         console.error("Driver not found in list.");
       }
     } else {
-      // Reset form if no driver is selected
       setFormData({
         licenseNumber: "",
         driverName: "",
@@ -88,10 +87,6 @@ const DriverForm = () => {
       : "http://localhost:5001/api/driver";
     const method = selectedDriver ? "PUT" : "POST";
 
-    console.log("Request URL:", url);
-    console.log("Request Method:", method);
-    console.log("Form Data Sent:", formData);
-
     try {
       const response = await fetch(url, {
         method: method,
@@ -100,11 +95,9 @@ const DriverForm = () => {
       });
 
       const responseData = await response.json();
-      console.log("Response Data:", responseData);
 
       if (response.ok) {
         alert("Driver saved successfully!");
-        // Refresh driver list
         const fetchDrivers = async () => {
           const response = await fetch("http://localhost:5001/api/driver");
           const data = await response.json();
@@ -121,102 +114,109 @@ const DriverForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <select value={selectedDriver} onChange={handleDriverSelect}>
-        <option value="">Select a Driver</option>
-        {drivers.map((driver) => (
-          <option key={driver.driverID} value={driver.driverID}>
-            {driver.driverName}
-          </option>
-        ))}
-      </select>
+    <div className="container mt-5">
+      <div className="card shadow border-0">
+        <div className="card-header bg-dark text-light text-center">
+          <h3 className="card-title">Driver Management Form</h3>
+        </div>
+        <div className="card-body bg-light">
+          <form onSubmit={handleSubmit}>
+            {/* Select Driver */}
+            <div className="mb-3">
+              <label htmlFor="driverSelect" className="form-label text-primary">
+                Select Driver
+              </label>
+              <select
+                id="driverSelect"
+                className="form-select border-primary"
+                value={selectedDriver}
+                onChange={handleDriverSelect}
+              >
+                <option value="">-- Choose a Driver --</option>
+                {drivers.map((driver) => (
+                  <option key={driver.driverID} value={driver.driverID}>
+                    {driver.driverName}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-      <input
-        name="licenseNumber"
-        placeholder="License Number"
-        value={formData.licenseNumber || ""}
-        onChange={handleChange}
-        required
-      />
-      <input
-        name="driverName"
-        placeholder="Driver Name"
-        value={formData.driverName || ""}
-        onChange={handleChange}
-        required
-      />
-      <input
-        name="homeAddress"
-        placeholder="Home Address"
-        value={formData.homeAddress || ""}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="number"
-        name="yearsOfExperience"
-        placeholder="Years of Experience"
-        value={formData.yearsOfExperience || ""}
-        onChange={handleChange}
-      />
-      <input
-        type="number"
-        name="numberOfDeliveries"
-        placeholder="Number of Deliveries"
-        value={formData.numberOfDeliveries || ""}
-        onChange={handleChange}
-      />
-      <input
-        name="email"
-        placeholder="Email"
-        type="email"
-        value={formData.email || ""}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="number"
-        name="age"
-        placeholder="Age"
-        value={formData.age || ""}
-        onChange={handleChange}
-      />
-      <input
-        type="number"
-        name="salary"
-        placeholder="Salary"
-        value={formData.salary || ""}
-        onChange={handleChange}
-      />
-      <input
-        type="date"
-        name="employmentDate"
-        placeholder="Employment Date"
-        value={formData.employmentDate || ""}
-        onChange={handleChange}
-      />
-      <select
-        name="workingStatus"
-        value={formData.workingStatus || ""}
-        onChange={handleChange}
-      >
-        <option value="">Select Working Status</option>
-        <option value="ACTIVE">ACTIVE</option>
-        <option value="INACTIVE">INACTIVE</option>
-        <option value="ON LEAVE">ON LEAVE</option>
-      </select>
-      <select
-        name="truckOwnedorAssigned"
-        value={formData.truckOwnedorAssigned || ""}
-        onChange={handleChange}
-      >
-        <option value="">Select Truck Ownership</option>
-        <option value="OWNED">OWNED</option>
-        <option value="ASSIGNED">ASSIGNED</option>
-      </select>
+            {/* Form Inputs */}
+            {[
+              { name: "licenseNumber", label: "License Number", placeholder: "Enter License Number" },
+              { name: "driverName", label: "Driver Name", placeholder: "Enter Driver Name" },
+              { name: "homeAddress", label: "Home Address", placeholder: "Enter Home Address" },
+              { name: "yearsOfExperience", label: "Years of Experience", placeholder: "Enter Years of Experience" },
+              { name: "numberOfDeliveries", label: "Number of Deliveries", placeholder: "Enter Number of Deliveries" },
+              { name: "email", label: "Email", placeholder: "Enter Email Address" },
+              { name: "age", label: "Age", placeholder: "Enter Age" },
+              { name: "salary", label: "Salary", placeholder: "Enter Salary" },
+              { name: "employmentDate", label: "Employment Date", placeholder: "" },
+            ].map((field, index) => (
+              <div className="mb-3" key={index}>
+                <label htmlFor={field.name} className="form-label text-primary">
+                  {field.label}
+                </label>
+                <input
+                  id={field.name}
+                  name={field.name}
+                  type={field.name === "email" ? "email" : field.name === "employmentDate" ? "date" : "text"}
+                  className="form-control border-primary"
+                  placeholder={field.placeholder}
+                  value={formData[field.name] || ""}
+                  onChange={handleChange}
+                  required={field.name !== "employmentDate"}
+                />
+              </div>
+            ))}
 
-      <button type="submit">{selectedDriver ? "Update Driver" : "Save Driver"}</button>
-    </form>
+            {/* Working Status */}
+            <div className="mb-3">
+              <label htmlFor="workingStatus" className="form-label text-primary">
+                Working Status
+              </label>
+              <select
+                id="workingStatus"
+                name="workingStatus"
+                className="form-select border-primary"
+                value={formData.workingStatus || ""}
+                onChange={handleChange}
+              >
+                <option value="">Select Working Status</option>
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="INACTIVE">INACTIVE</option>
+                <option value="ON LEAVE">ON LEAVE</option>
+              </select>
+            </div>
+
+            {/* Truck Ownership */}
+            <div className="mb-3">
+              <label htmlFor="truckOwnedorAssigned" className="form-label text-primary">
+                Truck Ownership
+              </label>
+              <select
+                id="truckOwnedorAssigned"
+                name="truckOwnedorAssigned"
+                className="form-select border-primary"
+                value={formData.truckOwnedorAssigned || ""}
+                onChange={handleChange}
+              >
+                <option value="">Select Truck Ownership</option>
+                <option value="OWNED">OWNED</option>
+                <option value="ASSIGNED">ASSIGNED</option>
+              </select>
+            </div>
+
+            {/* Submit Button */}
+            <div className="text-center">
+              <button type="submit" className="btn btn-primary btn-lg">
+                {selectedDriver ? "Update Driver" : "Save Driver"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   );
 };
 

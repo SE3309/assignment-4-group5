@@ -36,6 +36,7 @@ exports.createDriverPhone = (req, res) => {
 
 // Update an existing record
 exports.updateDriverPhone = (req, res) => {
+  const fields = ["driverID", "phoneNumber", "phoneType"]; 
   const assignments = fields.map((field) => `${field} = ?`).join(", ");
   const values = fields.map((field) => req.body[field]);
   const id = req.params.id;

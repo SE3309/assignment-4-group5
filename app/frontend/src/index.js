@@ -2,16 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import MultiTabSection from './components/MultiTabSection';
-import TableComponent from './TableComponents/FormComponent';
+import App from './App';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    
-
-    <TableComponent />
+    <App />
   </React.StrictMode>
 );
 

@@ -71,3 +71,17 @@ exports.updateTruck = (req, res) => {
     }
   );
 };
+
+exports.getSupplierByTruck = (req, res) => {
+  const truckID = req.params.id;
+  db.query(
+    "SELECT supplierID FROM Trailer WHERE truckID = ?",
+    [truckID],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (results.length === 0)
+        return res.status(404).json({ error: "No supplier found for this truck" });
+      res.status(200).json(results[0]); // Return the supplierID
+    }
+  );
+};

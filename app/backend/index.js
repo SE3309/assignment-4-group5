@@ -3,6 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
 const fs = require("fs");
+const searchRoutes = require("./routes/searchRoutes");
 
 dotenv.config();
 
@@ -28,6 +29,8 @@ fs.readdirSync(routesDir).forEach((file) => {
 app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
+
+app.use("/api/search", searchRoutes);
 
 // Start the server
 app.listen(PORT, () => {
