@@ -28,17 +28,22 @@ const TruckDamageReportForm = () => {
   const handleTruckSelect = async (e) => {
     const truckID = e.target.value;
     setFormData((prevFormData) => ({ ...prevFormData, truckID }));
-
+  
     if (truckID) {
       try {
         const response = await fetch(`http://localhost:5001/api/truck/${truckID}`);
         if (response.ok) {
           const truckData = await response.json();
+          console.log("Fetched Truck Details:", truckData); // Debugging log
+  
+          // Map fields to damageData and damageDescription
           setFormData((prevFormData) => ({
             ...prevFormData,
             truckID: truckData.truckID || "",
-            damageData: truckData.damageData || "",
-            damageDescription: truckData.damageDescription || "",
+            damageData: truckData.registration || "No registration data available", // Example mapping
+            damageDescription: truckData.insurancePolicyNo
+              ? `Insurance Policy: ${truckData.insurancePolicyNo}`
+              : "No insurance policy data available", // Example mapping
           }));
         } else {
           console.error("Error fetching truck details.");
@@ -46,8 +51,16 @@ const TruckDamageReportForm = () => {
       } catch (error) {
         console.error("Error fetching truck details:", error);
       }
+    } else {
+      // Reset form when no truck is selected
+      setFormData({
+        truckID: "",
+        damageData: "",
+        damageDescription: "",
+      });
     }
   };
+  
 
   // Handle form field changes
   const handleChange = (e) => {
@@ -99,6 +112,7 @@ const TruckDamageReportForm = () => {
                 name="truckID"
                 value={formData.truckID}
                 onChange={handleTruckSelect}
+                required
               >
                 <option value="">-- Choose a Truck --</option>
                 {truckIDs.map((item) => (

@@ -54,7 +54,9 @@ const DriverForm = () => {
           email: selected.email || "",
           age: selected.age || "",
           salary: selected.salary || "",
-          employmentDate: selected.employmentDate || "",
+          employmentDate: selected.employmentDate
+          ? new Date(selected.employmentDate).toISOString().split("T")[0]
+          : "",
           workingStatus: selected.workingStatus || "",
           truckOwnedorAssigned: selected.truckOwnedorAssigned || "",
         });
@@ -81,21 +83,29 @@ const DriverForm = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Format the employmentDate to 'YYYY-MM-DD'
+    const formattedDate = formData.employmentDate
+      ? new Date(formData.employmentDate).toISOString().split("T")[0]
+      : "";
+  
+    // Prepare the payload with the formatted date
+    const payload = { ...formData, employmentDate: formattedDate };
+  
     const url = selectedDriver
       ? `http://localhost:5001/api/driver/${selectedDriver}`
       : "http://localhost:5001/api/driver";
     const method = selectedDriver ? "PUT" : "POST";
-
+  
     try {
       const response = await fetch(url, {
         method: method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
-
+  
       const responseData = await response.json();
-
+  
       if (response.ok) {
         alert("Driver saved successfully!");
         const fetchDrivers = async () => {
@@ -112,7 +122,7 @@ const DriverForm = () => {
       console.error("Error saving driver:", error);
     }
   };
-
+  
   return (
     <div className="container mt-5">
       <div className="card shadow border-0">

@@ -16,6 +16,7 @@ const TrailerDamageReportForm = () => {
       try {
         const response = await fetch("http://localhost:5001/api/trailer");
         const data = await response.json();
+        console.log("Trailer IDs fetched:", data); // Debugging log
         setTrailerIDs(data);
       } catch (error) {
         console.error("Error fetching trailer IDs:", error);
@@ -23,6 +24,7 @@ const TrailerDamageReportForm = () => {
     };
     fetchTrailerIDs();
   }, []);
+  
 
   // Fetch trailer details by ID
   const fetchTrailerDetails = async (trailerID) => {
@@ -30,11 +32,14 @@ const TrailerDamageReportForm = () => {
       const response = await fetch(`http://localhost:5001/api/trailer/${trailerID}`);
       if (response.ok) {
         const data = await response.json();
+        console.log("Fetched Trailer Details:", data); // Debugging log
+  
+        // Map fields from backend response
         setFormData((prevFormData) => ({
           ...prevFormData,
           trailerID,
-          damageData: data.damageData || "",
-          damageDescription: data.damageDescription || "",
+          damageData: data.registration || "", // Assuming 'registration' is the damage data
+          damageDescription: data.trailerType || "", // Assuming 'trailerType' is the damage description
         }));
       } else {
         console.error("Failed to fetch trailer details.");
@@ -43,6 +48,8 @@ const TrailerDamageReportForm = () => {
       console.error("Error fetching trailer details:", error);
     }
   };
+  
+  
 
   // Handle dropdown selection change
   const handleTrailerSelect = (e) => {

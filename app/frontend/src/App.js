@@ -81,22 +81,8 @@ function App() {
         <Route path="/create-tables" element={<FormComponent />} />
         <Route path="/search" element={<SearchComponent />} />
         <Route path="/driver-metrics" element={<DriverMetricComponent />} />
-        <Route
-          path="/feature5"
-          element={
-            <div className="container mt-5 text-center">
-              <h1>Feature 5 Coming Soon</h1>
-            </div>
-          }
-        />
-        <Route
-          path="/feature6"
-          element={
-            <div className="container mt-5 text-center">
-              <h1>Feature 6 Coming Soon</h1>
-            </div>
-          }
-        />
+        <Route path="/finance-report" element={<FinanceReport />} />
+        <Route path="/driver-filter" element={<DriverFilterComponent />} />
       </Routes>
     </Router>
   );

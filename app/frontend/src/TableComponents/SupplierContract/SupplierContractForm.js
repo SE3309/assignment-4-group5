@@ -43,10 +43,15 @@ const SupplierContractForm = () => {
       if (selected) {
         setFormData({
           supplierID: selected.supplierID || "",
-          contractStart: selected.contractStart || "",
-          contractEnd: selected.contractEnd || "",
+          contractStart: selected.contractStart
+            ? new Date(selected.contractStart).toISOString().split("T")[0]
+            : "",
+          contractEnd: selected.contractEnd
+            ? new Date(selected.contractEnd).toISOString().split("T")[0]
+            : "",
           productType: selected.productType || "",
         });
+        
       } else {
         console.error("Supplier contract info not found.");
       }
