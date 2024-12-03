@@ -62,7 +62,7 @@ exports.updateDriver = (req, res) => {
     "workingStatus",
     "truckOwnedorAssigned",
   ];
-  
+
   const assignments = fields.map((field) => `${field} = ?`).join(", ");
   const values = fields.map((field) => req.body[field]);
   const driverID = req.params.id;
@@ -75,4 +75,30 @@ exports.updateDriver = (req, res) => {
       res.status(200).json({ message: "Driver updated successfully" });
     }
   );
+};
+
+// Fetch top-performing drivers
+exports.getTopPerformingDrivers = (req, res) => {
+  const query = `
+  SELECT d.driverID, d.driverName, d.numberOfDeliveries 
+  FROM Driver d 
+  ORDER BY d.numberOfDeliveries DESC 
+  LIMIT 10;
+  `;
+  db.query(query, (err, results) => {
+    if (err) return res.status(500).json({ error: "This is what's not working" });
+    res.status(200).json(results);
+  });
+};
+
+// Fetch average deliveries per driver
+exports.getAverageDeliveries = (req, res) => {
+  const query = `
+  SELECT AVG(numberOfDeliveries) AS averageDeliveries 
+  FROM Driver;
+  `;
+  db.query(query, (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(200).json(results[0]); // Send the first row which contains the result
+  });
 };
