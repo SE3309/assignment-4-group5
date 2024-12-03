@@ -5,6 +5,11 @@ const path = require("path");
 const fs = require("fs");
 const searchRoutes = require("./routes/searchRoutes");
 
+
+// /api/truck/assign-driver
+
+const truckAssignment = require("./routes/truckAssignmentRoutes");
+
 dotenv.config();
 
 const app = express();
@@ -29,6 +34,8 @@ fs.readdirSync(routesDir).forEach((file) => {
 app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
+
+app.post("/api", truckAssignment);
 
 app.use("/api/search", searchRoutes);
 

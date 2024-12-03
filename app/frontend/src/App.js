@@ -3,7 +3,11 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-route
 import './App.css';
 import FormComponent from './TableComponents/FormComponent'; // Adjust this path if needed
 import SearchComponent from './components/SearchComponent'; // Adjust this path if needed
-import DriverMetricComponent from './components/driverMetricsComponent'; // Correct import for the Driver Metrics component
+import DriverMetricComponent from './components/DriverMetricComponent'; // Correct import for the Driver Metrics component
+import FinanceReport from './components/FinanceReportComponent';
+import DriverFilterComponent from './components/DriverFilterComponent'; // Import the new component
+import ValidateDriverAssignment from './components/ValidateDriverAssignment'; // Import the new component
+
 
 // FrontPage Component
 function FrontPage() {
@@ -27,9 +31,9 @@ function FrontPage() {
         <div className="col-md-4 mb-3">
           <button
             className="btn btn-secondary btn-lg w-100"
-            onClick={() => navigate('/invoice-generator')}
+            onClick={() => navigate('/validate-driver-assignment')}
           >
-            Invoice Generator
+            Assign Truck to Driver
           </button>
         </div>
         <div className="col-md-4 mb-3">
@@ -59,9 +63,9 @@ function FrontPage() {
         <div className="col-md-4 mb-3">
           <button
             className="btn btn-info btn-lg w-100"
-            onClick={() => navigate('/feature6')}
+            onClick={() => navigate('/driver-filter')}
           >
-            Feature 6
+            Driver Filter
           </button>
         </div>
       </div>
@@ -78,22 +82,9 @@ function App() {
         <Route path="/create-tables" element={<FormComponent />} />
         <Route path="/search" element={<SearchComponent />} />
         <Route path="/driver-metrics" element={<DriverMetricComponent />} />
-        <Route
-          path="/feature5"
-          element={
-            <div className="container mt-5 text-center">
-              <h1>Feature 5 Coming Soon</h1>
-            </div>
-          }
-        />
-        <Route
-          path="/feature6"
-          element={
-            <div className="container mt-5 text-center">
-              <h1>Feature 6 Coming Soon</h1>
-            </div>
-          }
-        />
+        <Route path="/finance-report" element={<FinanceReport />} />
+        <Route path="/driver-filter" element={<DriverFilterComponent />} />
+        <Route path="/validate-driver-assignment" element={<ValidateDriverAssignment/>}/>
       </Routes>
     </Router>
   );

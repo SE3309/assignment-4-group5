@@ -28,7 +28,7 @@ const TruckAssignmentComponent = () => {
         setErrorMessage("");
 
         try {
-            const response = await axios.post("http://localhost:5001/api/truck/assign-driver", formData);
+            const response = await axios.post("http://localhost:5001/api/assign-driver", formData);
             setSuccessMessage(response.data.message);
         } catch (error) {
             setErrorMessage(error.response?.data?.error || "Failed to assign truck");
